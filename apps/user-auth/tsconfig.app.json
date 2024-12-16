@@ -1,0 +1,12 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+      "outDir": "../../dist/apps/user-auth",
+      // "paths": {
+      //   "common/*": ["../../common/*"],
+      // }
+      // "rootDir": "./src"
+    },
+    "include": ["src/**/*", "../../libs/shared/src/**/*","../../common/bootstraps/**/*"],
+    "exclude": ["node_modules", "dist"]
+}

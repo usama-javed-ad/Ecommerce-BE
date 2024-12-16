@@ -1,0 +1,76 @@
+services:
+  user-auth:
+    depends_on:
+      - mongo
+      - rabbit
+    build:
+      context: .
+      dockerfile: ./apps/user-auth/Dockerfile
+    command: npm run start:dev user-auth
+    container_name: user-auth
+    env_file:
+      - ./apps/user-auth/.env
+    ports:
+      - "3000:3000"
+  
+  products:
+    depends_on:
+      - mongo
+      - rabbit
+      - user-auth
+    build:
+      context: .
+      dockerfile: ./apps/products/Dockerfile
+    command: npm run start:dev products
+    container_name: products
+    env_file:
+      - ./apps/products/.env
+    ports:
+      - "3001:3001"
+
+  orders:
+    depends_on:
+      - mongo
+      - rabbit
+      - user-auth
+      - products
+    build:
+      context: .
+      dockerfile: ./apps/orders/Dockerfile
+    command: npm run start:dev orders
+    container_name: orders
+    env_file:
+      - ./apps/orders/.env
+    ports:
+      - "3002:3002"
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongoData:/data/db
+
+  rabbit:
+    image: rabbitmq:3-management
+    environment:
+      - "RABBITMQ_DEFAULT_PASS=guest"
+      - "RABBITMQ_DEFAULT_USER=guest"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - rabbitData:/var/lib/rabbitmq
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisData:/data
+
+volumes:
+  mongoData:
+  rabbitData:
+  redisData:
